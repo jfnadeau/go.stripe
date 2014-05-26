@@ -47,6 +47,15 @@ var (
 	Tokens        = new(TokenClient)
 )
 
+type BaseClient struct {
+	ApiKey string
+}
+
+func (self *BaseClient) query(method, path string, values url.Values, v interface{}) error {
+	values.Add("api_key", self.ApiKey)
+	return query(method, path, values, v)
+}
+
 // SetKeyEnv retrieves the Stripe API key using the STRIPE_API_KEY environment
 // variable.
 func SetKeyEnv() (err error) {
@@ -69,6 +78,12 @@ func query(method, path string, values url.Values, v interface{}) error {
 	// set the endpoint for the specific API
 	endpoint.Path = path
 	endpoint.User = url.User(_key)
+
+	requestApiKey := values.Get("api_key")
+	if requestApiKey != "" {
+		endpoint.User = url.User(requestApiKey)
+		values.Del("api_key")
+	}
 
 	// if this is an http GET, add the url.Values to the endpoint
 	if method == "GET" {

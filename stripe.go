@@ -52,6 +52,10 @@ type BaseClient struct {
 }
 
 func (self *BaseClient) query(method, path string, values url.Values, v interface{}) error {
+
+	if values == nil {
+		values = url.Values{}
+	}
 	values.Add("api_key", self.ApiKey)
 	return query(method, path, values, v)
 }

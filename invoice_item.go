@@ -46,7 +46,9 @@ type InvoiceItemParams struct {
 
 // InvoiceItemClient encapsulates operations for creating, updating, deleting
 // and querying invoices using the Stripe REST API.
-type InvoiceItemClient struct{}
+type InvoiceItemClient struct {
+	BaseClient
+}
 
 // Create adds an arbitrary charge or credit to the customer's upcoming invoice.
 //
@@ -67,7 +69,7 @@ func (self *InvoiceItemClient) Create(params *InvoiceItemParams) (*InvoiceItem, 
 		values.Add("invoice", params.Invoice)
 	}
 
-	err := query("POST", "/v1/invoiceitems", values, &item)
+	err := self.query("POST", "/v1/invoiceitems", values, &item)
 	return &item, err
 }
 

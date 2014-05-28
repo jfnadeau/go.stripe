@@ -34,12 +34,10 @@ type Invoice struct {
 
 // InvoiceLines represents an individual line items that is part of an invoice.
 type InvoiceLines struct {
-	InvoiceItems  []*InvoiceItem      `json:"invoiceitems"`
-	Prorations    []*InvoiceItem      `json:"prorations"`
-	Subscriptions []*SubscriptionItem `json:"subscriptions"`
+	Data []*InvoiceLine `json:"data"`
 }
 
-type SubscriptionItem struct {
+type InvoiceLine struct {
 	Amount int64   `json:"amount"`
 	Period *Period `json:"period"`
 	Plan   *Plan   `json:"plan"`

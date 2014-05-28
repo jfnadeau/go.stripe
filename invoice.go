@@ -52,7 +52,9 @@ type Period struct {
 
 // InvoiceClient encapsulates operations for querying invoices using the Stripe
 // REST API.
-type InvoiceClient struct{}
+type InvoiceClient struct {
+	BaseClient
+}
 
 // Retrieves the invoice with the given ID.
 //
@@ -60,7 +62,7 @@ type InvoiceClient struct{}
 func (self *InvoiceClient) Retrieve(id string) (*Invoice, error) {
 	invoice := Invoice{}
 	path := "/v1/invoices/" + url.QueryEscape(id)
-	err := query("GET", path, nil, &invoice)
+	err := self.query("GET", path, nil, &invoice)
 	return &invoice, err
 }
 

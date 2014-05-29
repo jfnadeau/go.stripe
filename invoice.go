@@ -38,9 +38,11 @@ type InvoiceLines struct {
 }
 
 type InvoiceLine struct {
-	Amount int64   `json:"amount"`
-	Period *Period `json:"period"`
-	Plan   *Plan   `json:"plan"`
+	Type        string  `json:"type"`
+	Description String  `json:"description"`
+	Amount      int64   `json:"amount"`
+	Period      *Period `json:"period"`
+	Plan        *Plan   `json:"plan"`
 }
 
 type Period struct {

@@ -50,6 +50,12 @@ type Period struct {
 	End   int64 `json:"end"`
 }
 
+type InvoiceParams struct {
+	// A fee in cents that will be applied to the invoice and transferred to the application owner’s
+	// Stripe account. The request must be made with an OAuth key in order to take an application fee
+	ApplicationFee int64
+}
+
 // InvoiceClient encapsulates operations for querying invoices using the Stripe
 // REST API.
 type InvoiceClient struct {
@@ -74,6 +80,22 @@ func (self *InvoiceClient) RetrieveCustomer(cid string) (*Invoice, error) {
 	values := url.Values{"customer": {cid}}
 	err := query("GET", "/v1/invoices/upcoming", values, &invoice)
 	return &invoice, err
+}
+
+// Update an invoice using the given Invoice Item ID.
+//
+// see https://stripe.com/docs/api#update_invoice
+func (self *InvoiceClient) Update(id string, params *InvoiceParams) (*Invoice, error) {
+
+	item := Invoice{}
+	values := url.Values{}
+
+	if params.ApplicationFee != 0 {
+		values.Add("application_fee", strconv.FormatInt(params.ApplicationFee, 10))
+	}
+
+	err := self.query("POST", "/v1/invoices/"+url.QueryEscape(id), values, &item)
+	return &item, err
 }
 
 // Returns a list of Invoices.

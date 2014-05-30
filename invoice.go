@@ -30,6 +30,7 @@ type Invoice struct {
 	EndingBalance   Int64         `json:"ending_balance"`
 	NextPayment     Int64         `json:"next_payment_attempt"`
 	Livemode        bool          `json:"livemode"`
+	ApplicationFee  Int64         `json:"application_fee"`
 }
 
 // InvoiceLines represents an individual line items that is part of an invoice.

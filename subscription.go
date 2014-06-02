@@ -18,6 +18,7 @@ const (
 //
 // see https://stripe.com/docs/api#subscription_object
 type Subscription struct {
+	Id                 string `json:"id"`
 	Customer           string `json:"customer"`
 	Status             string `json:"status"`
 	Plan               *Plan  `json:"plan"`
@@ -34,7 +35,9 @@ type Subscription struct {
 
 // SubscriptionClient encapsulates operations for updating and canceling
 // customer subscriptions using the Stripe REST API.
-type SubscriptionClient struct{}
+type SubscriptionClient struct {
+	BaseClient
+}
 
 // SubscriptionParams encapsulates options for updating a Customer's
 // subscription.
@@ -64,12 +67,16 @@ type SubscriptionParams struct {
 
 	// (Optional) The quantity you'd like to apply to the subscription you're creating.
 	Quantity int64
+
+	// A positive decimal (with at most two decimal places) between 1 and 100 that represents
+	// the percentage of the subscription invoice amount due each billing period
+	ApplicationFeePercent int64
 }
 
 // Subscribes a customer to a new plan.
 //
 // see https://stripe.com/docs/api#update_subscription
-func (self *SubscriptionClient) Update(customerId string, params *SubscriptionParams) (*Subscription, error) {
+func (self *SubscriptionClient) Create(customerId string, params *SubscriptionParams) (*Subscription, error) {
 	values := url.Values{"plan": {params.Plan}}
 
 	// set optional parameters
@@ -85,6 +92,9 @@ func (self *SubscriptionClient) Update(customerId string, params *SubscriptionPa
 	if params.Quantity != 0 {
 		values.Add("quantity", strconv.FormatInt(params.Quantity, 10))
 	}
+	if params.ApplicationFeePercent != 0 {
+		values.Add("application_fee_percent", strconv.FormatInt(params.ApplicationFeePercent, 10))
+	}
 	// attach a new card, if requested
 	if len(params.Token) != 0 {
 		values.Add("card", params.Token)
@@ -94,7 +104,7 @@ func (self *SubscriptionClient) Update(customerId string, params *SubscriptionPa
 
 	s := Subscription{}
 	path := "/v1/customers/" + url.QueryEscape(customerId) + "/subscription"
-	err := query("POST", path, values, &s)
+	err := self.query("POST", path, values, &s)
 	return &s, err
 }
 

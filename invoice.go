@@ -52,6 +52,8 @@ type Period struct {
 }
 
 type InvoiceParams struct {
+	Customer string
+
 	// A fee in cents that will be applied to the invoice and transferred to the application owner’s
 	// Stripe account. The request must be made with an OAuth key in order to take an application fee
 	ApplicationFee int64
@@ -79,8 +81,26 @@ func (self *InvoiceClient) Retrieve(id string) (*Invoice, error) {
 func (self *InvoiceClient) RetrieveCustomer(cid string) (*Invoice, error) {
 	invoice := Invoice{}
 	values := url.Values{"customer": {cid}}
-	err := query("GET", "/v1/invoices/upcoming", values, &invoice)
+	err := self.query("GET", "/v1/invoices/upcoming", values, &invoice)
 	return &invoice, err
+}
+
+// Create
+//
+// see https://stripe.com/docs/api#create_invoice
+func (self *InvoiceClient) Create(params *InvoiceParams) (*Invoice, error) {
+
+	item := Invoice{}
+	values := url.Values{}
+
+	values.Add("customer", params.Customer)
+
+	if params.ApplicationFee != 0 {
+		values.Add("application_fee", strconv.FormatInt(params.ApplicationFee, 10))
+	}
+
+	err := self.query("POST", "/v1/invoices", values, &item)
+	return &item, err
 }
 
 // Update an invoice using the given Invoice Item ID.

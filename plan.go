@@ -29,7 +29,9 @@ type Plan struct {
 
 // PlanClient encapsulates operations for creating, updating, deleting and
 // querying plans using the Stripe REST API.
-type PlanClient struct{}
+type PlanClient struct {
+	BaseClient
+}
 
 // PlanParams encapsulates options for creating a new Plan.
 type PlanParams struct {
@@ -75,7 +77,7 @@ func (self *PlanClient) Create(params *PlanParams) (*Plan, error) {
 		values.Add("trial_period_days", strconv.Itoa(params.TrialPeriodDays))
 	}
 
-	err := query("POST", "/v1/plans", values, &plan)
+	err := self.query("POST", "/v1/plans", values, &plan)
 	return &plan, err
 }
 

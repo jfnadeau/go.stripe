@@ -109,7 +109,7 @@ func (self *PlanClient) Update(id string, newName string) (*Plan, error) {
 func (self *PlanClient) Delete(id string) (bool, error) {
 	resp := DeleteResp{}
 	path := "/v1/plans/" + url.QueryEscape(id)
-	if err := query("DELETE", path, nil, &resp); err != nil {
+	if err := self.query("DELETE", path, nil, &resp); err != nil {
 		return false, err
 	}
 	return resp.Deleted, nil

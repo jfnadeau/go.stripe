@@ -103,7 +103,7 @@ func (self *SubscriptionClient) Create(customerId string, params *SubscriptionPa
 	}
 
 	s := Subscription{}
-	path := "/v1/customers/" + url.QueryEscape(customerId) + "/subscription"
+	path := "/v1/customers/" + url.QueryEscape(customerId) + "/subscriptions"
 	err := self.query("POST", path, values, &s)
 	return &s, err
 }

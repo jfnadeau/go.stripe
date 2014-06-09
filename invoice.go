@@ -119,6 +119,17 @@ func (self *InvoiceClient) Update(id string, params *InvoiceParams) (*Invoice, e
 	return &item, err
 }
 
+// if you'd like to attempt to collect payment on an invoice out of the normal retry schedule or for some other reason
+//
+// see https://stripe.com/docs/api#pay_invoice
+func (self *InvoiceClient) Pay(id string) (*Invoice, error) {
+
+	item := Invoice{}
+
+	err := self.query("POST", "/v1/invoices/"+url.QueryEscape(id)+"/pay", nil, &item)
+	return &item, err
+}
+
 // Returns a list of Invoices.
 //
 // see https://stripe.com/docs/api#list_customer_invoices

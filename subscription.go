@@ -83,9 +83,7 @@ func (self *SubscriptionClient) Create(customerId string, params *SubscriptionPa
 	if len(params.Coupon) != 0 {
 		values.Add("coupon", params.Coupon)
 	}
-	if params.Prorate {
-		values.Add("prorate", "true")
-	}
+
 	if params.TrialEnd != 0 {
 		values.Add("trial_end", strconv.FormatInt(params.TrialEnd, 10))
 	}
@@ -120,6 +118,8 @@ func (self *SubscriptionClient) Update(customerId string, subscriptionId string,
 	}
 	if params.Prorate {
 		values.Add("prorate", "true")
+	} else {
+		values.Add("prorate", "false")
 	}
 	if params.TrialEnd != 0 {
 		values.Add("trial_end", strconv.FormatInt(params.TrialEnd, 10))

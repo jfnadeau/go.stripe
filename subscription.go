@@ -75,7 +75,7 @@ type SubscriptionParams struct {
 
 // Subscribes a customer to a new plan.
 //
-// see https://stripe.com/docs/api#update_subscription
+// see https://stripe.com/docs/api#create_subscription
 func (self *SubscriptionClient) Create(customerId string, params *SubscriptionParams) (*Subscription, error) {
 	values := url.Values{"plan": {params.Plan}}
 
@@ -104,6 +104,41 @@ func (self *SubscriptionClient) Create(customerId string, params *SubscriptionPa
 
 	s := Subscription{}
 	path := "/v1/customers/" + url.QueryEscape(customerId) + "/subscriptions"
+	err := self.query("POST", path, values, &s)
+	return &s, err
+}
+
+// Updating a Subscription
+//
+// see https://stripe.com/docs/api#update_subscription
+func (self *SubscriptionClient) Update(customerId string, subscriptionId string, params *SubscriptionParams) (*Subscription, error) {
+	values := url.Values{"plan": {params.Plan}}
+
+	// set optional parameters
+	if len(params.Coupon) != 0 {
+		values.Add("coupon", params.Coupon)
+	}
+	if params.Prorate {
+		values.Add("prorate", "true")
+	}
+	if params.TrialEnd != 0 {
+		values.Add("trial_end", strconv.FormatInt(params.TrialEnd, 10))
+	}
+	if params.Quantity != 0 {
+		values.Add("quantity", strconv.FormatInt(params.Quantity, 10))
+	}
+	if params.ApplicationFeePercent != 0 {
+		values.Add("application_fee_percent", strconv.FormatInt(params.ApplicationFeePercent, 10))
+	}
+	// attach a new card, if requested
+	if len(params.Token) != 0 {
+		values.Add("card", params.Token)
+	} else if params.Card != nil {
+		appendCardParamsToValues(params.Card, &values)
+	}
+
+	s := Subscription{}
+	path := "/v1/customers/" + url.QueryEscape(customerId) + "/subscriptions/" + url.QueryEscape(subscriptionId)
 	err := self.query("POST", path, values, &s)
 	return &s, err
 }

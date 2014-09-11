@@ -147,22 +147,22 @@ func (self *SubscriptionClient) Update(customerId string, subscriptionId string,
 // subscription immediately.
 //
 // see https://stripe.com/docs/api#cancel_subscription
-func (self *SubscriptionClient) Cancel(customerId string) (*Subscription, error) {
+func (self *SubscriptionClient) Cancel(customerId string, subscriptionId string) (*Subscription, error) {
 	s := Subscription{}
-	path := "/v1/customers/" + url.QueryEscape(customerId) + "/subscription"
-	err := query("DELETE", path, nil, &s)
+	path := "/v1/customers/" + url.QueryEscape(customerId) + "/subscriptions/" + url.QueryEscape(subscriptionId)
+	err := self.query("DELETE", path, nil, &s)
 	return &s, err
 }
 
 // Cancels the customer's subscription at the end of the billing period.
 //
 // see https://stripe.com/docs/api#cancel_subscription
-func (self *SubscriptionClient) CancelAtPeriodEnd(customerId string) (*Subscription, error) {
+func (self *SubscriptionClient) CancelAtPeriodEnd(customerId string, subscriptionId string) (*Subscription, error) {
 	values := url.Values{}
 	values.Add("at_period_end", "true")
 
 	s := Subscription{}
-	path := "/v1/customers/" + url.QueryEscape(customerId) + "/subscription"
-	err := query("DELETE", path, values, &s)
+	path := "/v1/customers/" + url.QueryEscape(customerId) + "/subscriptions/" + url.QueryEscape(subscriptionId)
+	err := self.query("DELETE", path, values, &s)
 	return &s, err
 }

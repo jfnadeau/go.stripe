@@ -16,6 +16,7 @@ type EventData struct {
 }
 
 const (
-	EventType_AccountUpdated = "account.updated"
-	EventType_InvoiceCreated = "invoice.created"
+	EventType_AccountUpdated      = "account.updated"
+	EventType_InvoiceCreated      = "invoice.created"
+	EventType_SubscriptionDeleted = "customer.subscription.deleted"
 )

@@ -3,6 +3,7 @@ package stripe
 import (
 	"net/url"
 	"strconv"
+	"strings"
 )
 
 // Invoice represents statements of what a customer owes for a particular
@@ -11,26 +12,27 @@ import (
 //
 // see https://stripe.com/docs/api#invoice_object
 type Invoice struct {
-	Id              string        `json:"id"`
-	AmountDue       int64         `json:"amount_due"`
-	AttemptCount    int           `json:"attempt_count"`
-	Attempted       bool          `json:"attempted"`
-	Closed          bool          `json:"closed"`
-	Paid            bool          `json:"paid"`
-	PeriodEnd       int64         `json:"period_end"`
-	PeriodStart     int64         `json:"period_start"`
-	Subtotal        int64         `json:"subtotal"`
-	Total           int64         `json:"total"`
-	Charge          String        `json:"charge"`
-	Customer        string        `json:"customer"`
-	Date            int64         `json:"date"`
-	Discount        *Discount     `json:"discount"`
-	Lines           *InvoiceLines `json:"lines"`
-	StartingBalance int64         `json:"starting_balance"`
-	EndingBalance   Int64         `json:"ending_balance"`
-	NextPayment     Int64         `json:"next_payment_attempt"`
-	Livemode        bool          `json:"livemode"`
-	ApplicationFee  Int64         `json:"application_fee"`
+	Id              string                 `json:"id"`
+	AmountDue       int64                  `json:"amount_due"`
+	AttemptCount    int                    `json:"attempt_count"`
+	Attempted       bool                   `json:"attempted"`
+	Closed          bool                   `json:"closed"`
+	Paid            bool                   `json:"paid"`
+	PeriodEnd       int64                  `json:"period_end"`
+	PeriodStart     int64                  `json:"period_start"`
+	Subtotal        int64                  `json:"subtotal"`
+	Total           int64                  `json:"total"`
+	Charge          String                 `json:"charge"`
+	Customer        string                 `json:"customer"`
+	Date            int64                  `json:"date"`
+	Discount        *Discount              `json:"discount"`
+	Lines           *InvoiceLines          `json:"lines"`
+	StartingBalance int64                  `json:"starting_balance"`
+	EndingBalance   Int64                  `json:"ending_balance"`
+	NextPayment     Int64                  `json:"next_payment_attempt"`
+	Livemode        bool                   `json:"livemode"`
+	ApplicationFee  Int64                  `json:"application_fee"`
+	Metadata        map[string]interface{} `json:"metadata"`
 }
 
 // InvoiceLines represents an individual line items that is part of an invoice.
@@ -57,6 +59,8 @@ type InvoiceParams struct {
 	// A fee in cents that will be applied to the invoice and transferred to the application owner’s
 	// Stripe account. The request must be made with an OAuth key in order to take an application fee
 	ApplicationFee int64
+
+	Metadata string
 }
 
 // InvoiceClient encapsulates operations for querying invoices using the Stripe
@@ -94,6 +98,9 @@ func (self *InvoiceClient) Create(params *InvoiceParams) (*Invoice, error) {
 	values := url.Values{}
 
 	values.Add("customer", params.Customer)
+
+	parts := strings.Split(params.Metadata, "=")
+	values.Add("metadata"+parts[0], parts[1])
 
 	if params.ApplicationFee != 0 {
 		values.Add("application_fee", strconv.FormatInt(params.ApplicationFee, 10))

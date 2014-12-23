@@ -60,6 +60,14 @@ type InvoiceParams struct {
 	// Stripe account. The request must be made with an OAuth key in order to take an application fee
 	ApplicationFee int64
 
+	// Boolean representing whether an invoice is closed or not. To close an invoice, pass true.
+	Closed bool
+
+	// Boolean representing whether an invoice is forgiven or not. To forgive an invoice, pass true.
+	// Forgiving an invoice instructs us to update the subscription status as if the invoice were succcessfully paid.
+	// Once an invoice has been forgiven, it cannot be unforgiven or reopened.
+	Forgiven bool
+
 	Metadata string
 }
 
@@ -120,6 +128,14 @@ func (self *InvoiceClient) Update(id string, params *InvoiceParams) (*Invoice, e
 
 	if params.ApplicationFee != 0 {
 		values.Add("application_fee", strconv.FormatInt(params.ApplicationFee, 10))
+	}
+
+	if params.Closed {
+		values.Add("closed", "true")
+	}
+
+	if params.Forgiven {
+		values.Add("forgiven", "true")
 	}
 
 	err := self.query("POST", "/v1/invoices/"+url.QueryEscape(id), values, &item)

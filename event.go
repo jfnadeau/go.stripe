@@ -26,6 +26,7 @@ const (
 	EventType_CustomerDeleted                = "customer.deleted"
 	EventType_CustomerUpdated                = "customer.updated"
 	EventType_SubscriptionUpdated            = "customer.subscription.updated"
+	EventType_SubscriptionCreated            = "customer.subscription.created"
 	EventType_InvoiceItemCreated             = "invoiceitem.created"
 	EventType_AccountApplicationDeauthorized = "account.application.deauthorized"
 )
